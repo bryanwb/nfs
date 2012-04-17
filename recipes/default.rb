@@ -22,8 +22,15 @@ node["nfs"]["packages"].each do |nfspkg|
   package nfspkg
 end
 
+if platform?("redhat","amazon","oracle","scientific","centos" ) and
+    node["platform_version"].to_f >= 6
+    rpc_service = "rpcbind"
+else
+    rpc_service = "portmap"
+end
+
 # Start portmap on 111
-service "portmap" do
+service rpc_service do
   action [ :start, :enable ]
 end
 
